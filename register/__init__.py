@@ -29,6 +29,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     input_caloric_reduction= req.get_json().get('caloric_reduction')
     input_action= req.get_json().get('action')
     input_id_person= req.get_json().get('id_person')
+    input_security_question_answer = req.get_json().get('security_question_answer')
 
 
    
@@ -46,21 +47,51 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     registration_date = date.today()
 
-    if input_action=='insert':
+  
 
+    action_result = ""
+
+
+    if input_action=='insert':
         conn = psycopg2.connect(conn_string)
         cursor = conn.cursor()
-        query = "INSERT INTO person (name, user_name, password, birth_date, gender, height, weight, activity_factor, caloric_reduction, registration_date) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s,%s,%s)"
-        valores = (input_name, input_username, final_hash, input_birth_date,input_gender, input_height, input_weight, input_activity_factor,input_caloric_reduction, registration_date )
+        query = "INSERT INTO person (name, user_name, password, birth_date, gender, height, weight, activity_factor, caloric_reduction, registration_date,security_question_answer) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s,%s,%s,%s)"
+        valores = (input_name, input_username, final_hash, input_birth_date,input_gender, input_height, input_weight, input_activity_factor,input_caloric_reduction, registration_date,input_security_question_answer )
         cursor.execute(query, valores)
-    elif input_action=='update':
+        action_result='OK'
+       
+    elif input_action=='update_profile':
         conn = psycopg2.connect(conn_string)
         cursor = conn.cursor()
         query = "UPDATE person SET password = %s, birth_date = %s, gender = %s, height = %s, weight = %s, activity_factor = %s WHERE id = %s"
         valores = (final_hash, input_birth_date,input_gender, input_height, input_weight, input_activity_factor,input_id_person)
         cursor.execute(query, valores)
-    
-    query = "SELECT  id, name, user_name, birth_date,gender, height, weight, activity_factor,caloric_reduction,registration_date FROM person WHERE user_name = %s"
+        action_result='OK'
+
+    elif input_action=='update_password':
+        conn = psycopg2.connect(conn_string)
+        cursor = conn.cursor()
+        query = "SELECT  id, user_name, birth_date, security_question_answer FROM person WHERE user_name = %s"
+        valores = (input_username,)
+        cursor.execute(query, valores) 
+        row = cursor.fetchone()
+        personid = row[0]
+        user_name = row[1]
+        birth_date = row[2]
+        security_question_answer= row[3]
+        
+        if security_question_answer == input_security_question_answer and input_birth_date == birth_date.isoformat():
+            conn = psycopg2.connect(conn_string)
+            cursor = conn.cursor()      
+            query = "UPDATE person SET password = %s WHERE id = %s"
+            valores = (final_hash, personid)
+            cursor.execute(query, valores)
+            action_result = 'OK'
+        else:
+            action_result = 'ERROR'
+
+ 
+    query = "SELECT  id, name, user_name, birth_date,gender, height, weight, activity_factor,caloric_reduction,registration_date, security_question_answer FROM person WHERE user_name = %s"
     valores = (input_username,)
     cursor.execute(query, valores) 
     row = cursor.fetchone()
@@ -74,10 +105,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     activity_factor = row[7]
     caloric_reduction= row[8]
     registration_date= row[9]
-
-    print("REGISTRO weight **************** "+ str(weight))
-
-
+    security_question_answer= row[10]
+    
+    
     # Generar una clave privada RSA
     private_key = rsa.generate_private_key(
         public_exponent=65537,
@@ -158,6 +188,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         "activity_factor": float(activity_factor),
         "caloric_reduction":caloric_reduction,
         "registration_date":registration_date_str,
+        "action_result":action_result,
         "token": token,
         "progress": list(progress.values()) 
 

@@ -51,13 +51,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     token02 = row[0]
 
     # Definir las columnas de características y la columna de etiqueta para el modelo
-    columnas_caracteristicas = ["Edad", "Peso", "Altura", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo", "TipoLunes", "TipoMartes", "TipoMiercoles ", "TipoJueves", "TipoViernes", "TipoSabado", "TipoDomingo"]
+    columnas_caracteristicas = ["Edad", "Peso", "Altura", "Sexo","Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo", "TipoLunes", "TipoMartes", "TipoMiercoles", "TipoJueves", "TipoViernes", "TipoSabado", "TipoDomingo"]
     columna_etiqueta = dia
 
     # Filtrar los registros donde TipoLunes tiene valor 2
     tipodia ="TipoLunes"
     if dia == "Lunes":
-        print("dia**" +dia)
         tipodia="TipoLunes"
     elif dia == "Martes":
         tipodia="TipoMartes"
@@ -88,7 +87,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     joblib.dump(modelo_entrenado, temp_file)
 
     # Crear un DataFrame con los datos de entrada para la predicción
-    input_data = pd.DataFrame([[30, 85, 170, 37, 10, 18, 34, 9, 23, 1,1,1,1,1,1,1,1]], columns=columnas_caracteristicas)
+    input_data = pd.DataFrame([[30, 85, 170, 1,37, 10, 18, 34, 9, 23, 1,1,1,1,1,1,1,1]], columns=columnas_caracteristicas)
 
     # Realizar la predicción utilizando el modelo entrenado
     predictions = modelo_entrenado.predict(input_data)

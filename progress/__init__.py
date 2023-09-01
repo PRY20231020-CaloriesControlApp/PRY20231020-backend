@@ -69,7 +69,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         person_id = row[1]
         consumed_date = row[2]
         consumed_calories = row[3]
-        weight = row[4]
+        progress_weight = row[4]
 
        
 
@@ -78,7 +78,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             'person_id':person_id,
             'consumed_date': consumed_date.isoformat(),
             'consumed_calories': consumed_calories,
-            'weight': float(weight)
+            'progress_weight': float(progress_weight)
         }
         progress[progress_id] = info_progress
 
