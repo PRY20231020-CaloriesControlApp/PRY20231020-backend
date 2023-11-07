@@ -8,10 +8,11 @@ La aplicación móvil se enfoca en el control del consumo calórico de alimentos
 
 ## Integrantes
 
-Este proyecto ha sido desarrollado por un equipo comprometido de profesionales:
+Este proyecto ha sido desarrollado por:
 
-- u201817801 - Huaman La Cruz, Gerardo Francisco
 - u201915358 - Huamani Tito, Kelly Rocio
+- u201817801 - Huaman La Cruz, Gerardo Francisco
+
 
 ## Funcionalidades del Backend
 
